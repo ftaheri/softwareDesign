@@ -1,0 +1,6 @@
+rule TRAILMANAGEMENT2HTML
+	transform trailmanagement : TrailManagement { 
+	template : "trailManagement2html.egl"
+	//produce this HTML file
+	target : "gen/trailmanagement" + ".html"
+}

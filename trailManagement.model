@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ecore:TrailManagement xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="trailManagement" xmi:id="_JlzGENVpEe2Z-9iNots7aQ">
+  <trail xmi:id="_6OHoENWBEe2Z-9iNots7aQ" difficulty="very_hard">
+    <stop xmi:id="_-B6-8NWDEe2Z-9iNots7aQ" isOrigin="true"/>
+    <stop xmi:id="_-hHcYNWDEe2Z-9iNots7aQ" isDestination="true"/>
+    <currentWeather xmi:id="_qgrskNWGEe2Z-9iNots7aQ" weather_id="1"/>
+    <hiker xmi:id="_68hmMNWBEe2Z-9iNots7aQ" name="person1" age="15" isJoining="true"/>
+    <leader xmi:id="_aKycMNWGEe2Z-9iNots7aQ" name="leader1" age="20" isJoining="true" experience="expert"/>
+    <equipment xsi:type="ecore:MedicalEquipment" xmi:id="_wYJZwNWHEe2Z-9iNots7aQ" name="medEq1" importance="high"/>
+  </trail>
+  <trail xmi:id="_1lWpANWIEe2Z-9iNots7aQ"/>
+</ecore:TrailManagement>

@@ -1,0 +1,198 @@
+context TrailManagement {
+	constraint hasTrail {
+		check: self.trail.size()>0
+		message: "Trail Management must have at least one trail to manage"
+	}
+}
+context Trail {
+	constraint uniqueID {
+		check: Trail.all.count(t | t.ID = self.ID) ==1
+		message: "Trails must have unique IDs. ID = " + self.ID + " is used more than once!"
+	
+	}
+
+	critique hasMeal {
+	
+		check: self.meal.notEmpty()
+		message: "There are no meals"
+	}
+	constraint hasDate {
+		check: self.startHour>=0 and self.startHour<=1159 and self.endHour>=0 and self.endHour<=1159
+		message: "You must specify valid starting and ending hours"
+	}
+	constraint difficulty {
+		check: self.difficulty!=null
+		message: "You must specify the difficulty level"
+	}
+	constraint hasOriginDestination {
+		check: self.stop.one(s | s.isOrigin) and self.stop.one(s | s.isDestination)
+		message: "You must specify exactly one origin and one destination"
+	}
+	constraint hasWeather {
+		check: self.currentWeather!=null
+		message: "You must specify the current weather"
+	}
+	critique hasEmergencySpot1{
+		guard: self.difficulty.name=="hard" and self.satisfies("difficulty")
+		check: self.stop.exists(s | s.isEmergencySpot)
+		message: "For this difficulty level, you should specify at least one emergency spot"
+	}
+	constraint hasEmergencySpot2{
+		guard: self.difficulty.name=="very_hard" 
+		check: self.stop.exists(s | s.isEmergencySpot)
+		message: "For this difficulty level, you must specify at least one emergency spot"
+	}
+	constraint hasLeader{
+		check: self.leader.exists(l | l.isJoining)
+		message: "A group must have at least one joining leader"
+	}
+}
+
+
+context Location {
+	critique hasName{
+		check: self.name!=null
+		message: "You should specify location(s) names"
+	}
+	
+}
+
+context Equipment {
+	constraint hasName{
+		check:  self.name!=null
+		message: "You must specify equipment's name"
+	}
+	
+	
+}
+context MedicalEquipment{
+	constraint hasImportance{
+		guard: self.satisfies("hasName")
+		check:  self.importance!=null
+		message: "You should specify importance for the equpiment: " + self.name
+	}
+	constraint importantSuppliers{
+		guard: self.importance.name=="high"
+		check: self.suppliers.size()>0
+		message: "A supplier must be defined for the important equipment: "+self.name
+	}
+}
+
+context Weather {
+	critique hasWind{
+		check:  self.wind.size()>0
+		message: "You should specify wind"
+	}
+	constraint hasPrecipitation{
+		check:  self.precipitation.size()>0
+		message: "You must specify percipitation" 
+	
+	}
+	critique hasTemperature{
+		check: self.temperature.size()>0
+		message: "You should specify temperature " 
+	
+	}
+}
+context Leader {
+	constraint experiencedLeader{
+		check: self.experience.name == "expert"	
+		message: "You must choose someone with an expert level as a leader"
+	}
+	constraint leaderAge{
+		check: self.age>=18
+		message: "You must choose someone in the legal age as a leader"
+	
+	}
+	constraint hasCertificate{
+		check: self.hasCertificate
+		message: "You must choose someone with a valid certificate as a leader"
+	}
+	constraint hasContanctInfo{
+		check: self.contactInformation!=null
+		message: "A leader must provide contact information"
+	}
+	critique hasEmergencyContact{
+		check: self.emergencyContact!=null
+		message: "A leader should provide emergency contact"
+	}
+
+}
+context Person {
+
+	constraint registeredName{
+		check: self.name!=null
+		message: "A person must register their names"
+	}
+	constraint age{
+		guard: self.satisfies("registeredName")
+		check: self.age>=12
+		message: self.name + ": people less than 12 cannot join the hike"
+	}
+
+	constraint willJoinBasedOnWeather{
+		guard: self.isJoining and self.tolerableWeather!=null
+		check{
+			var tolerableWeather = self.tolerableWeather;
+			var currentWeather = Trail.all.first().currentWeather;
+			
+			var windFlag = true;
+			for (cwind in currentWeather.wind){
+				windFlag =  (tolerableWeather.wind.exists(tw | tw == cwind));
+				if (windFlag == false)	break;
+			}
+			var temperatureFlag = true;
+			for (ctemperature in currentWeather.temperature){
+				temperatureFlag =  (tolerableWeather.temperature.exists(tt | tt == ctemperature));
+				if (temperatureFlag == false)	break;
+			}
+			var precipitationFlag = true;
+			for (cprecipitation in currentWeather.precipitation){
+				precipitationFlag =  (tolerableWeather.precipitation.exists(tp | tp == cprecipitation));
+				if (precipitationFlag == false)	break;
+			}
+			return (windFlag or temperatureFlag or precipitationFlag) and self.isJoining;
+		}
+		message: self.name+ " cannot tolerate the current weather"
+
+	}
+	critique canEatNotEmpty{
+		check: self.canEatType.size()>0
+		message: "You should specify the types of food "+ self.name + " can eat."
+	}
+	critique haveMeal{
+		guard: self.satisfies("canEatNotEmpty") and Meal.all.notEmpty()
+		check {
+			var vegan = self.canEatType.exists(t | t.name == "vegan");
+			var halal =self.canEatType.exists(t | t.name == "halal"); 
+			var glutten_free =self.canEatType.exists(t | t.name == "glutten_free"); 
+			var lactose_free =self.canEatType.exists(t | t.name == "lactose_free");
+			return (vegan and Meal.all.exists(m | m.type.name == "vegan"))
+				or (halal and Meal.all.exists(m | m.type.name == "halal"))
+				or (glutten_free and Meal.all.exists(m | m.type.name == "glutten_free"))
+				or (lactose_free and Meal.all.exists(m | m.type.name == "lactose_free"));
+			
+		}
+		message: self.name+ " has nothing to eat."
+	}
+}
+context Meal{
+	
+	constraint hasName{
+		check:  self.name!=null
+		message: "You must specify Meal(s) name(s)"	
+	}
+	constraint hasEquipment{
+		guard: not self.isPrepared
+		check: self.cookedBy.size()>0
+		message: "There is no cooking equipment for "+ Meal.All.select(m |not m.isPrepared)
+	}
+	constraint hasType{
+		check: self.type.notEmpty()
+		message: "Meal type cannot be empty!"
+	}
+
+}
+post{
+	"Finished evaluation!".println();
+}

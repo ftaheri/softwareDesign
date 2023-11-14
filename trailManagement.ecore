@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="trailManagement" nsURI="trailManagement" nsPrefix="ecore">
+  <eClassifiers xsi:type="ecore:EClass" name="TrailManagement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="trail" upperBound="-1"
+        eType="#//Trail" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="weather" upperBound="-1"
+        eType="#//Weather" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Trail">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startHour" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endHour" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="difficulty" eType="#//Difficulty"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="stop" upperBound="-1" eType="#//Location"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="currentWeather" lowerBound="1"
+        eType="#//Weather" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hiker" upperBound="-1"
+        eType="#//Person" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leader" upperBound="-1"
+        eType="#//Leader" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="equipment" upperBound="-1"
+        eType="#//Equipment" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="meal" upperBound="-1" eType="#//Meal"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Location">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isOrigin" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isDestination" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEmergencySpot" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Equipment" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="suppliers" upperBound="-1"
+        eType="#//Person"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CookingEquipment" eSuperTypes="#//Equipment">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="usedForMeal" upperBound="-1"
+        eType="#//Meal" eOpposite="#//Meal/cookedBy"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MedicalEquipment" eSuperTypes="#//Equipment">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="importance" eType="#//NecessityLevel"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Weather">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weather_id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="wind" upperBound="-1" eType="#//Wind"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="temperature" upperBound="-1"
+        eType="#//Temperature"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="precipitation" upperBound="-1"
+        eType="#//Precipitation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Person">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="age" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isJoining" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tolerableWeather" lowerBound="1"
+        eType="#//Weather"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="experience" eType="#//Experience"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="canEatType" upperBound="-1"
+        eType="#//MealType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Leader" eSuperTypes="#//Person">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hasCertificate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="emergencyContact" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="contactInformation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Meal">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" upperBound="-1" eType="#//MealType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isPrepared" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cookedBy" upperBound="-1"
+        eType="#//CookingEquipment" eOpposite="#//CookingEquipment/usedForMeal"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="MealType">
+    <eLiterals name="vegan"/>
+    <eLiterals name="halal" value="1"/>
+    <eLiterals name="glutten_free" value="2"/>
+    <eLiterals name="lactose_free" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Wind">
+    <eLiterals name="calm"/>
+    <eLiterals name="breeze" value="1"/>
+    <eLiterals name="gale" value="2"/>
+    <eLiterals name="storm" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Precipitation">
+    <eLiterals name="dry"/>
+    <eLiterals name="light" value="1"/>
+    <eLiterals name="moderate" value="2"/>
+    <eLiterals name="heavy" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Temperature">
+    <eLiterals name="frigid"/>
+    <eLiterals name="cold" value="1"/>
+    <eLiterals name="moderate" value="2"/>
+    <eLiterals name="warm" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Difficulty">
+    <eLiterals name="easy"/>
+    <eLiterals name="medium" value="1"/>
+    <eLiterals name="hard" value="2"/>
+    <eLiterals name="very_hard" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="NecessityLevel">
+    <eLiterals name="low"/>
+    <eLiterals name="medium" value="1"/>
+    <eLiterals name="high" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Experience">
+    <eLiterals name="novice"/>
+    <eLiterals name="moderate" value="1"/>
+    <eLiterals name="expert" value="2"/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,259 @@
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous"><style> 
+
+body{
+	font-family:tahoma;
+	background: url('/Users/nafisehvalizadehshiran/Downloads/trail1.jpg') no-repeat;
+	background-position: center;
+	
+}
+
+
+.title{
+    margin: 30px auto 0 auto;
+    width: 100%;
+    text-align: center;
+}
+
+.title h1{
+	 border:1px solid #ccc;
+	 display:inline-block;
+	 padding:10px 20px;
+	 background-color:#393646;
+	 color:#f4eee0;
+	 border-radius:5px;
+	 width:50%;
+}
+
+p{
+	border-bottom:1px solid #ccc;
+	padding-bottom:20px;
+	
+
+}
+
+li p {
+	border-bottom:none !important;
+	padding-bottom:0 !important;
+}
+
+.list-title{
+	display:inline-block;
+	padding: 10px 10px;
+	width:auto
+	height:50px;
+	background-color:#cfcfcf;
+	width:100%;
+	text-align:center;
+	border-radius:3px;
+
+}
+
+.accordion{
+	width:50% !important;
+	opacity:0.9;
+}
+
+.btn{
+	color:#000 !important;
+	
+}
+
+</style>
+<div class="title"> 
+
+<h1> Trail Information</h1>
+</div>
+[%var trailNum = 0;%]
+[%var number = 1;%]
+<div class="accordion mx-auto" id="accordionExample">
+<div class="card">
+
+[%for (trail in trailmanagement.trail){%]
+
+    <div class="card-header" id="heading[%=number%]">
+      <h2 class="mb-0">
+        <button class="btn btn-link btn-block text-center" type="button" data-toggle="collapse" data-target="#collapse[%=number%]" aria-expanded="true" aria-controls="collapseOne">
+                  [%trailNum++;%]
+ Trail [%=trailNum%]
+        </button>
+      </h2>
+    </div>
+	<div id="collapse[%=number%]" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+	[%number++;%]
+      <div class="card-body">
+         <p>Trail difficulty level: [%=trail.difficulty.name%]</p>
+ <p>Origin: [%=trail.stop.select(s | s.isOrigin).name.first()%] - Destination: [%=trail.stop.select(s | s.isDestination).name.first()%].</p>
+  
+   Stops:	
+  <ol>
+  [%for (stop in trail.stop.select(s| s.isOrigin==false and s.isDestination == false) ){%]
+   <li>
+   <span>[%=stop.name%]</span>
+   </li>
+  
+  [%}%]
+  </ol>
+  <h5 class="list-title">List of meals:</h5>
+  <ol> 
+  	[%for (meal in trail.meal){%]
+  	<li>
+  	
+  	<p>[%=meal.name%]:[%=meal.type%]</p>
+  	</li>
+  	  [%}%]
+  	</p>
+  </ol> 
+    <h5 class="list-title">List of Leaders:</h5>
+        [%for (leader in trail.leader.select(l| l.isJoining==true)){%]
+      		<li>
+   			<span>[%=leader.name%]</span>
+   			</li>
+   		[%}%]
+      <h5 class="list-title">List of Hikers:</h5>
+      
+      [%for (hiker in trail.hiker.select(h| h.isJoining==true)){%]
+      	<li>
+   		<span>[%=hiker.name%]</span>
+   		</li>
+      [%}%]
+      
+      
+      
+      <h5 class="list-title">Meal Options:</h5>
+      [%for (hiker in trail.hiker.select(h| h.isJoining==true)){%]
+      	[%=hiker.name%]:
+      	[%var meals: Sequence;%]
+      	[%meals.clear();%]
+      	[%for (etype in hiker.canEatType){%]
+      		[%for (meal in trail.meal){%]
+      			
+	      		[%for (mtype in meal.type){%]
+	      			
+	      			[%if (etype==mtype and not meals.exists(m| m==meal.name)){%]
+	      				[%meals.add(meal.name);%]
+				      	<li>
+				   		<span>[%=meal.name%]</span>
+				   		
+				   		</li>
+				   	[%}%]
+				 [%}%]
+			[%}%]	 
+		[%}%]	   		
+      [%}%]
+      
+      [%for (leader in trail.leader.select(l| l.isJoining==true)){%]
+	      		[%=leader.name%]:
+	      	[%for (etype in leader.canEatType){%]
+	      		[%for (meal in trail.meal){%]
+	      			[%var et = 0;%]
+		      		[%for (mtype in meal.type){%]
+		      			
+		      			[%if (etype==mtype and et==0){%]
+					      	<li>
+					   		<span>[%=meal.name%]</span>
+					   		[%et++;%]
+					   		
+					   		</li>
+					   	[%}%]
+					 [%}%]
+				[%}%]	 
+			[%}%]
+   		[%}%]
+   		
+   		<h5 class="list-title">Cooking Equipments:</h5>
+   		[%for (equipment in trail.equipment){%]
+   			
+   			
+   			
+   			[%if((equipment.type.name) = "CookingEquipment") {%]
+   				<li>
+   				[%=equipment.name%]:
+	   			[%for (supplier in equipment.suppliers){%]
+	   				<span>[%=supplier.name%]</span>
+	   				
+	   			[%}%]
+   			 [%}%]  			</li>
+   			
+   		[%}%]
+   		
+   		
+   		
+   		<h5 class="list-title">Medical Equipments:</h5>
+   		[%for (equipment in trail.equipment){%]
+   			
+   			[%if((equipment.type.name) = "MedicalEquipment") {%]
+   				<li>
+   				[%=equipment.name%]:
+	   			[%for (supplier in equipment.suppliers){%]
+	   				<span>[%=supplier.name%]</span>
+	   				
+	   			[%}%]
+   			 [%}%]  			</li>
+   			
+   		[%}%]
+   		
+   		<h5 class="list-title">Weather Forcast:</h5>
+   		[%for (weather in (trail.currentWeather)){%]
+   				[%for (w in (weather.wind)){%]
+   					<span>Wind: [%=w%]</span><br>
+   				[%}%]
+		   		[%for (t in (weather.temperature)){%]			
+		   			<span>Temperature: [%=t%]</span><br>
+		   		[%}%]
+		   		[%for (p in (weather.precipitation)){%]
+   					<span>Precipitation: [%=p%]</span>
+   				[%}%]
+   		[%}%]
+   		
+   		
+   		<h5 class="list-title">Tolerable Weather Conditions:</h5>
+   		[%for (person in (trail.hiker)){%]
+   			<span>[%=person.name%]</span>
+   			[%for (tw in person.tolerableWeather){%]
+   				[%for (item in tw.temperature){%]
+   					<li>
+   					[%=item%]
+   					</li>
+   				[%}%]
+   			
+   			[%}%]
+   			
+   		[%}%]
+   		
+   		
+   		[%for (person in (trail.leader)){%]
+   			<span>[%=person.name%]</span>
+   			[%for (tw in person.tolerableWeather){%]
+   				[%for (item in tw.temperature){%]
+   					<li>
+   					[%=item%]
+   					</li>
+   				[%}%]
+   			
+   			[%}%]
+   			
+   		[%}%]
+   		
+   		
+  
+      </div>
+
+      
+    </div>
+     
+  
+ [%if(trail.stop.select(s | s.isOrigin or s.isDestination).size()>2){%]
+ [%}%]
+ 
+  
+[%}%]
+
+ </div>
+ 
+ 
+ 
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
